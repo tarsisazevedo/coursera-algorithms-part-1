@@ -1,17 +1,35 @@
+# encoding: utf-8
+
 import unittest
+
 
 class DynamicConectivity(object):
     def __init__(self, items):
         self.items = range(items)
+        self.size = [1 for i in range(items)]
 
+    # cada elemento referencia o pai, montando uma arvore.
+    # a arvore é balanceada sempre colocando a menor diretamente na raiz da maior arvore.
     def union(self, p, q):
-        item = self.items[p]
-        for index, it in enumerate(self.items):
-            if item == it:
-                self.items[index] = self.items[q]
+        i = self._root(p)
+        j = self._root(q)
+        if i == j:
+            return
+        if self.size[i] < self.size[j]:
+            self.items[i] = j
+            self.size[j] += self.size[i]
+        else:
+            self.items[j] = i
+            self.size[i] += self.size[j]
 
     def connected(self, p, q):
-        return self.items[p] == self.items[q]
+        return self._root(p) == self._root(q)
+
+    def _root(self, i):
+        while (i != self.items[i]):
+            self.items[i] = self.items[self.items[i]]
+            i = self.items[i]
+        return i
 
 
 class DynamicConectivityTestCase(unittest.TestCase):
